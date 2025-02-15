@@ -1,0 +1,72 @@
+Using Page  for salesforce login 
+
+import { Page, Locator } from '@playwright/test';
+
+export class LoginPage {
+    private readonly page: Page;
+    private readonly usernameInput: Locator;
+    private readonly passwordInput: Locator;
+    private readonly loginButton: Locator;
+
+    constructor(page: Page) {
+        this.page = page;
+        this.usernameInput = page.locator('input[name="username"]');
+        this.passwordInput = page.locator('input[name="pw"]');
+        this.loginButton = page.locator('text="Log In"');
+    }
+
+    async navigateTo(url: string = 'https://login.salesforce.com/?locale=in'): Promise<void> {
+        await this.page.goto(url);
+    }
+
+    async enterUsername(username: string): Promise<void> {
+        await this.usernameInput.fill(username);
+    }
+
+    async enterPassword(password: string): Promise<void> {
+        await this.passwordInput.fill(password);
+    }
+
+    async clickLogin(): Promise<void> {
+        await this.loginButton.click();
+    }
+
+    async login(username: string, password: string): Promise<void> {
+        await this.enterUsername(username);
+        await this.enterPassword(password);
+        await this.clickLogin();
+    }
+}
+
+
+-----------------------------------------------------------------------------------
+
+using test 
+
+import { test, expect, Page } from '@playwright/test';
+
+test.describe('Login Test', () => {
+    let page: Page;
+
+    test.beforeAll(async ({ browser }) => {
+        page = await browser.newPage();
+        await page.goto('https://login.salesforce.com/?locale=in', { waitUntil: 'domcontentloaded' });
+    });
+
+    test('performUserAction', async () => {
+        const userAction = 'Enter username and password, then submit';
+        const usernameInput = page.locator('input[name="username"]');
+        const passwordInput = page.locator('input[name="pw"]');
+        const submitButton = page.locator('input[type="submit"]');
+
+        await usernameInput.fill('username');
+        await passwordInput.fill('password');
+        await submitButton.click();
+
+        await expect(page).toHaveURL('https://login.salesforce.com/?locale=in');
+    });
+
+    test.afterAll(async () => {
+        await page.close();
+    });
+});
