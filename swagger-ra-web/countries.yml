@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+  title: Countries API
+  description: Public API to retrieve a list of countries with basic details.
+  version: 1.0.0
+
+servers:
+  - url: https://restcountries.com/v3.1
+    description: Public API Server
+
+paths:
+  /all:
+    get:
+      summary: Get a list of all countries
+      description: Returns a list of countries including names, codes, and basic details.
+      operationId: getCountriesList
+      responses:
+        '200':
+          description: A list of countries.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: object
+                      properties:
+                        common:
+                          type: string
+                          example: India
+                        official:
+                          type: string
+                          example: Republic of India
+                    cca2:
+                      type: string
+                      example: IN
+                    cca3:
+                      type: string
+                      example: IND
+                    capital:
+                      type: array
+                      items:
+                        type: string
+                      example: ["New Delhi"]
+                    region:
+                      type: string
+                      example: Asia
+                    subregion:
+                      type: string
+                      example: Southern Asia
+        '400':
+          description: Bad request
+        '500':
+          description: Server error
